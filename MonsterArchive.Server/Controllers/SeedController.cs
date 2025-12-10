@@ -41,16 +41,17 @@ namespace MonsterArchive.Server.Controllers
             int numberOfLootAdded = 0;
 
             // lookup dictionary of existing monsters
-            var monstersByName = _context.Monsters
+            var monstersById = _context.Monsters
                 .AsNoTracking()
-                .ToDictionary(x => x.Name, StringComparer.OrdinalIgnoreCase);
+                .ToDictionary(x => x.MonsterId);
 
             // === First pass: add Monsters ===
             for (int nRow = 2; nRow <= nEndRow; nRow++)
             {
-                var monsterName = worksheet.Cells[nRow, 1].GetValue<string>();
-                var species = worksheet.Cells[nRow, 2].GetValue<string>();
-                var element = worksheet.Cells[nRow, 3].GetValue<string>();
+                var monsterId = worksheet.Cells[nRow, 1].GetValue<int>();
+                var monsterName = worksheet.Cells[nRow, 2].GetValue<string>();
+                var species = worksheet.Cells[nRow, 3].GetValue<string>();
+                var element = worksheet.Cells[nRow, 4].GetValue<string>();
                 var weakness = worksheet.Cells[nRow, 5].GetValue<string>();
                 var rank = worksheet.Cells[nRow, 6].GetValue<string>();
                 var aggressionLevel = worksheet.Cells[nRow, 7].GetValue<string>();
@@ -58,11 +59,12 @@ namespace MonsterArchive.Server.Controllers
                 if (string.IsNullOrWhiteSpace(monsterName))
                     continue;
 
-                if (monstersByName.ContainsKey(monsterName))
+                if (monstersById.ContainsKey(monsterId))
                     continue;
 
                 var monster = new Monster
                 {
+                    MonsterId = monsterId,
                     Name = monsterName,
                     Species = species,
                     Element = element,
@@ -72,7 +74,7 @@ namespace MonsterArchive.Server.Controllers
                 };
 
                 await _context.Monsters.AddAsync(monster);
-                monstersByName.Add(monsterName, monster);
+                monstersById.Add(monsterId, monster);
                 numberOfMonstersAdded++;
             }
 
@@ -80,28 +82,20 @@ namespace MonsterArchive.Server.Controllers
                 await _context.SaveChangesAsync();
 
             // refresh lookup with IDs now assigned
-            monstersByName = _context.Monsters
+            monstersById = _context.Monsters
                 .AsNoTracking()
-                .ToDictionary(x => x.Name, StringComparer.OrdinalIgnoreCase);
+                .ToDictionary(x => x.MonsterId);
 
             // === Second pass: add Loot ===
             for (int nRow = 2; nRow <= nEndRow; nRow++)
             {
-                var monsterName = worksheet.Cells[nRow, 1].GetValue<string>();
+                var monsterId = worksheet.Cells[nRow, 1].GetValue<int>();
                 var itemName = worksheet.Cells[nRow, 9].GetValue<string>();
                 var rarity = worksheet.Cells[nRow, 10].GetValue<string>();
 
-                if (string.IsNullOrWhiteSpace(monsterName) || string.IsNullOrWhiteSpace(itemName))
-                    continue;
-
-                if (!monstersByName.ContainsKey(monsterName))
-                    continue;
-
-                var monsterId = monstersByName[monsterName].Id;
-
                 if (!_context.Loots.Any(l => l.ItemName == itemName && l.Rarity == rarity && l.MonsterId == monsterId))
                 {
-                    var loot = new Loot
+                    Loot loot = new Loot
                     {
                         ItemName = itemName,
                         Rarity = rarity,

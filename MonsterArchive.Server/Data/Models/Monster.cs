@@ -13,29 +13,31 @@ namespace MonsterArchive.Server.Data.Models
     public class Monster
     {
         [Key]
-        [Column("id")]
-        public int Id { get; set; }                                         // The unique id and primary key for this City
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]   // <-- No auto-increment, we use Excel MonsterId
+        [Column("monsterId")]
+        public int MonsterId { get; set; }                      // Primary key
 
-        [Column("name")]
-        [StringLength(50)]
+        [Column("name")]                                    
+        [StringLength(100)]
         [Unicode(false)]
-        public required string Name { get; set; }                           // Monster name (in UTF8 format)
+        public required string Name { get; set; }               // Name of the monster
 
-        [Column("species")]
-        public required string Species { get; set; }                        // Monster species
+        [Column("species")]                             
+        public required string Species { get; set; }            // Species of the monster
 
         [Column("element")]
-        public required string Element { get; set; }                        // Monster elemental type
+        public required string Element { get; set; }            // Element of the monster
 
         [Column("weakness")]
-        public required string Weakness { get; set; }                       // Monster weakness type
+        public required string Weakness { get; set; }           // Weakness of the monster
 
         [Column("rank")]
-        public required string Rank { get; set; }                           // Monster rank (e.g., Low, High, M)
+        public required string Rank { get; set; }               // Rank of the monster
 
         [Column("aggressionLevel")]
-        public required string AggressionLevel { get; set; }                // Monster aggression level
+        public required string AggressionLevel { get; set; }    // Aggression level of the monster
 
-        public ICollection<Loot> Loots { get; set; } = new List<Loot>();    // Navigation property for related Loot items
+        public ICollection<Loot> Loots { get; set; } = new List<Loot>();
     }
+
 }

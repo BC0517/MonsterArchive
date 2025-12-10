@@ -11,27 +11,27 @@ using MonsterArchive.Server.Data;
 namespace MonsterArchive.Server.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251205063904_Initial")]
-    partial class Initial
+    [Migration("20251210071300_UpdateLootForeignKey")]
+    partial class UpdateLootForeignKey
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.0")
+                .HasAnnotation("ProductVersion", "9.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
             modelBuilder.Entity("MonsterArchive.Server.Data.Models.Loot", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("LootId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasColumnName("id");
+                        .HasColumnName("lootId");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("LootId"));
 
                     b.Property<string>("ItemName")
                         .IsRequired()
@@ -41,8 +41,7 @@ namespace MonsterArchive.Server.Data.Migrations
                         .HasColumnName("itemName");
 
                     b.Property<int>("MonsterId")
-                        .HasColumnType("int")
-                        .HasColumnName("monsterId");
+                        .HasColumnType("int");
 
                     b.Property<string>("Rarity")
                         .IsRequired()
@@ -51,9 +50,11 @@ namespace MonsterArchive.Server.Data.Migrations
                         .HasColumnType("varchar(50)")
                         .HasColumnName("rarity");
 
-                    b.HasKey("Id");
+                    b.HasKey("LootId");
 
                     b.HasIndex("ItemName");
+
+                    b.HasIndex("LootId");
 
                     b.HasIndex("MonsterId");
 
@@ -64,12 +65,9 @@ namespace MonsterArchive.Server.Data.Migrations
 
             modelBuilder.Entity("MonsterArchive.Server.Data.Models.Monster", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<int>("MonsterId")
                         .HasColumnType("int")
-                        .HasColumnName("id");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnName("monsterId");
 
                     b.Property<string>("AggressionLevel")
                         .IsRequired()
@@ -113,7 +111,7 @@ namespace MonsterArchive.Server.Data.Migrations
                         .HasColumnType("varchar(100)")
                         .HasColumnName("weakness");
 
-                    b.HasKey("Id");
+                    b.HasKey("MonsterId");
 
                     b.HasIndex("AggressionLevel");
 

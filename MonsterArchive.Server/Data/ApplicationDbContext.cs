@@ -14,6 +14,12 @@ namespace MonsterArchive.Server.Data
         }
         public DbSet<Loot> Loots => Set<Loot>();
         public DbSet<Monster> Monsters => Set<Monster>();
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            IConfigurationBuilder configurationBuilder = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.json").AddJsonFile("appsettings.Development.json", optional: true);
+        }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new LootEntityTypeConfiguration());

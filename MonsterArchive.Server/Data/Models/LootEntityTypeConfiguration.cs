@@ -8,8 +8,8 @@ namespace MonsterArchive.Server.Data.Models
         {
             builder.ToTable("Loot");                                        // Map to "Loot" table
 
-            builder.HasKey(x => x.Id);                                      // Primary key
-            builder.Property(x => x.Id).IsRequired();                       // Id is required
+            builder.HasKey(x => x.LootId);                                  // Primary key
+            builder.Property(x => x.LootId).IsRequired();                   // Id is required
 
             builder.Property(x => x.ItemName).IsRequired()                  // ItemName is required
                 .HasMaxLength(100)                                          // Max length 100

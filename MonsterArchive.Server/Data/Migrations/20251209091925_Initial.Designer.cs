@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MonsterArchive.Server.Data;
 
@@ -10,9 +11,11 @@ using MonsterArchive.Server.Data;
 namespace MonsterArchive.Server.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251209091925_Initial")]
+    partial class Initial
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -38,7 +41,8 @@ namespace MonsterArchive.Server.Data.Migrations
                         .HasColumnName("itemName");
 
                     b.Property<int>("MonsterId")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("monsterId");
 
                     b.Property<string>("Rarity")
                         .IsRequired()

@@ -14,8 +14,7 @@ namespace MonsterArchive.Server.Data.Migrations
                 name: "Monsters",
                 columns: table => new
                 {
-                    id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    monsterId = table.Column<int>(type: "int", nullable: false),
                     name = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: false),
                     species = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: false),
                     element = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: false),
@@ -25,14 +24,14 @@ namespace MonsterArchive.Server.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Monsters", x => x.id);
+                    table.PrimaryKey("PK_Monsters", x => x.monsterId);
                 });
 
             migrationBuilder.CreateTable(
                 name: "Loot",
                 columns: table => new
                 {
-                    id = table.Column<int>(type: "int", nullable: false)
+                    lootId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     itemName = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: false),
                     rarity = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: false),
@@ -40,12 +39,12 @@ namespace MonsterArchive.Server.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Loot", x => x.id);
+                    table.PrimaryKey("PK_Loot", x => x.lootId);
                     table.ForeignKey(
                         name: "FK_Loot_Monsters_monsterId",
                         column: x => x.monsterId,
                         principalTable: "Monsters",
-                        principalColumn: "id",
+                        principalColumn: "monsterId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -53,6 +52,11 @@ namespace MonsterArchive.Server.Data.Migrations
                 name: "IX_Loot_itemName",
                 table: "Loot",
                 column: "itemName");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Loot_lootId",
+                table: "Loot",
+                column: "lootId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Loot_monsterId",
