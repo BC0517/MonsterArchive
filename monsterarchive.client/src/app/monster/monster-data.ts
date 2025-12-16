@@ -5,6 +5,6 @@ export interface MonsterData {
   element: string;
   weakness: string;
   rank: string;
-  aggresionLevel: string;
+  aggressionLevel: string;
   loots: string[];
 }

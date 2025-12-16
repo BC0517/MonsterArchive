@@ -6,7 +6,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<SpaRoot>..\monsterarchive.client</SpaRoot>
 		<SpaProxyLaunchCommand>npm start</SpaProxyLaunchCommand>
-		<SpaProxyServerUrl>https://localhost:4200</SpaProxyServerUrl>
+		<SpaProxyServerUrl>http://localhost:64458</SpaProxyServerUrl>
 		<UserSecretsId>1bb1fdca-9960-4df7-a8f8-c90de9c9b3fb</UserSecretsId>
 	</PropertyGroup>
 
