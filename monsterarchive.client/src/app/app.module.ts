@@ -10,12 +10,14 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { LootComponent } from './loot/loot.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
-    NavMenuComponent
+    NavMenuComponent,
+    LootComponent
   ],
   imports: [
     BrowserModule, HttpClientModule,
