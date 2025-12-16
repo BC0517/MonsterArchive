@@ -1,9 +1,9 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from './home/home.component';
-import { LootComponent } from './loot/loot.component';
+import { LootComponent } from './loot/loot';
 
-const routes: Routes = [
+export const routes: Routes = [
   { path: '', component: HomeComponent, pathMatch: 'full' },
   { path: 'loot', component: LootComponent}
 ];
