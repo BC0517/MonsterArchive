@@ -3,20 +3,20 @@ import { Component} from '@angular/core';
 import { LootData } from './loot-data';
 import { RouterLink } from '@angular/router';
 import { environment } from '../../environments/environment.development';
+import { Observable } from 'rxjs';
+import { AsyncPipe } from '@angular/common';
 
 @Component({
   selector: 'app-loot',
-  imports: [RouterLink],
-  templateUrl: './loot.component.html',
-  styleUrl: './loot.component.scss'
+  imports: [RouterLink,AsyncPipe],
+  templateUrl: './loot.html',
+  styleUrl: './loot.scss'
 })
 
-export class LootComponent {
-
-  countries: LootData[] = [];
+export class Loot{
+  loot: any;
+  loots$: Observable<LootData[]>;
   constructor(http: HttpClient) {
-    http.get<LootData[]>(environment.apiUrl + "api/Loots").subscribe(result => {
-      this.countries = result;
-    });
+    this.loots$ = http.get<LootData[]>(environment.apiUrl + 'api/Loots');
   }
 }

@@ -7,9 +7,9 @@
         <th>MonsterId</th>
     </thead>
     <tbody>
-        @for (city of (cities$ | async); track $index) {
+        @for (loot of (loots$ | async); track $index) {
         <tr>
-            <td><a [routerLink]="['/city', city.id]">{{city.id}}</a></td>
+            <td><a [routerLink]="['/loot', loot.lootId]">{{loot.lootId}}</a></td>
             <td>{{loot.lootId}}</td>
             <td>{{loot.itemName}}</td>
             <td>{{loot.rarity}}</td>

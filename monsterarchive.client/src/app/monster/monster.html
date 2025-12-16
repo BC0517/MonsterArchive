@@ -1,0 +1,26 @@
+<h1>Monsters</h1>
+<table class = "table table-striped">
+    <thead>
+        <th>MonsterId</th>
+        <th>Name</th>
+        <th>Species</th>
+        <th>Element</th>
+        <th>Weakness</th>
+        <th>Rank</th>
+        <th>AggresionLevel</th>
+        <!-- <th>Loots</th> -->
+    </thead>
+    <tbody>
+        @for (monster of (monsters$ | async); track $index) {
+        <tr>
+            <td><a [routerLink]="['/monster', monster.monsterId]">{{monster.monsterId}}</a></td>
+            <td>{{monster.monsterId}}</td>
+            <td>{{monster.name}}</td>
+            <td>{{monster.element}}</td>
+            <td>{{monster.weakness}}</td>
+            <td>{{monster.rank}}</td>
+            <td>{{monster.aggresionLevel}}</td>
+        </tr>
+    }
+    </tbody>
+</table>

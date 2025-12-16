@@ -1,11 +1,13 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { HomeComponent } from './home/home.component';
-import { LootComponent } from './loot/loot';
+import { Home } from './home/home';
+import { Loot } from './loot/loot';
+import { Monster } from './monster/monster';
 
 export const routes: Routes = [
-  { path: '', component: HomeComponent, pathMatch: 'full' },
-  { path: 'loot', component: LootComponent}
+  { path: '', component: Home, pathMatch: 'full' },
+  { path: 'loot', component: Loot},
+  { path: 'monster', component: Monster }
 ];
 
 @NgModule({

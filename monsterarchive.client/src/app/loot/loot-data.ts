@@ -1,5 +1,5 @@
 export interface LootData {
-  id: number;
+  lootId: number;
   itemName: string;
   rarity: string;
   monsterId: number;
