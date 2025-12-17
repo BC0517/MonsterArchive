@@ -1,18 +1,18 @@
 // import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-// import { NavMenuComponent } from './nav-bar';
+// import { Auth } from './auth';
 
-// describe('NavMenuComponent', () => {
-//   let component: NavMenuComponent;
-//   let fixture: ComponentFixture<NavMenuComponent>;
+// describe('Auth', () => {
+//   let component: Auth;
+//   let fixture: ComponentFixture<Auth>;
 
 //   beforeEach(async () => {
 //     await TestBed.configureTestingModule({
-//       declarations: [NavMenuComponent]
+//       declarations: [Auth]
 //     })
 //     .compileComponents();
-    
-//     fixture = TestBed.createComponent(NavMenuComponent);
+
+//     fixture = TestBed.createComponent(Auth);
 //     component = fixture.componentInstance;
 //     fixture.detectChanges();
 //   });

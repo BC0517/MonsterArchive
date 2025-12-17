@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { RouterLink } from "@angular/router";
 import { AngularMaterialModule } from '../angular-material';
+import { AuthService } from '../auth/auth-service';
 
 @Component({
   selector: 'app-nav-bar',
@@ -9,5 +10,5 @@ import { AngularMaterialModule } from '../angular-material';
   styleUrl: './nav-bar.scss'
 })
 export class NavBar {
-
+  constructor(public authService: AuthService) {}
 }
