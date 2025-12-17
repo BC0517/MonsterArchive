@@ -4,116 +4,177 @@ using Microsoft.EntityFrameworkCore;
 using OfficeOpenXml;
 using MonsterArchive.Server.Data;
 using MonsterArchive.Server.Data.Models;
+using Microsoft.AspNetCore.Identity;
+using Azure.Identity;
 
 namespace MonsterArchive.Server.Controllers
 {
-    [Route("api/[controller]/[action]")]
     [ApiController]
-    public class SeedController : ControllerBase
+    [Route("api/[controller]")]
+    public class SeedController(ApplicationDbContext context, IWebHostEnvironment env,IConfiguration configuration,
+        RoleManager<IdentityRole> roleManager, UserManager<MonsterArchiveUser> userManager) : ControllerBase
     {
-        private readonly ApplicationDbContext _context;
-        private readonly IWebHostEnvironment _env;
+        private readonly ApplicationDbContext _context = context;
+        private readonly IWebHostEnvironment _env = env;
 
-        public SeedController(ApplicationDbContext context, IWebHostEnvironment env)
+
+        // POST: api/Seed/import, don't use GET
+        [HttpPost("import")]
+        public async Task<IActionResult> Import()
         {
-            _context = context;
-            _env = env;
-        }
+            //// Restrict access to development environment only
+            //if (!_env.IsDevelopment())
+            //    return Forbid();
 
-        [HttpGet]
-        public async Task<ActionResult> Import()
-        {
-            // only allow in Development
-            if (!_env.IsDevelopment())
-                throw new SecurityException("Not allowed");
-
+            // Read the Excel file from the specified path
             var path = Path.Combine(
                 _env.ContentRootPath,
                 "Data/Source/COMP 584 Monster Data.xlsx");
 
+            if (!System.IO.File.Exists(path))
+                return NotFound("Seed file not found.");
+
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+
             using var stream = System.IO.File.OpenRead(path);
             using var excelPackage = new ExcelPackage(stream);
 
-            var worksheet = excelPackage.Workbook.Worksheets[0];
-            var nEndRow = worksheet.Dimension.End.Row;
+            var worksheet = excelPackage.Workbook.Worksheets.First();
+            var endRow = worksheet.Dimension.End.Row;
 
-            int numberOfMonstersAdded = 0;
-            int numberOfLootAdded = 0;
+            int monstersAdded = 0;
+            int lootAdded = 0;
 
-            // lookup dictionary of existing monsters
-            var monstersById = _context.Monsters
+            // Load existing monsters and loot into memory for quick lookup
+            var monstersById = await _context.Monsters
                 .AsNoTracking()
-                .ToDictionary(x => x.MonsterId);
+                .ToDictionaryAsync(m => m.MonsterId);
 
-            // === First pass: add Monsters ===
-            for (int nRow = 2; nRow <= nEndRow; nRow++)
-            {
-                var monsterId = worksheet.Cells[nRow, 1].GetValue<int>();
-                var monsterName = worksheet.Cells[nRow, 2].GetValue<string>();
-                var species = worksheet.Cells[nRow, 3].GetValue<string>();
-                var element = worksheet.Cells[nRow, 4].GetValue<string>();
-                var weakness = worksheet.Cells[nRow, 5].GetValue<string>();
-                var rank = worksheet.Cells[nRow, 6].GetValue<string>();
-                var aggressionLevel = worksheet.Cells[nRow, 7].GetValue<string>();
-
-                if (string.IsNullOrWhiteSpace(monsterName))
-                    continue;
-
-                if (monstersById.ContainsKey(monsterId))
-                    continue;
-
-                var monster = new Monster
-                {
-                    MonsterId = monsterId,
-                    Name = monsterName,
-                    Species = species,
-                    Element = element,
-                    Weakness = weakness,
-                    Rank = rank,
-                    AggressionLevel = aggressionLevel
-                };
-
-                await _context.Monsters.AddAsync(monster);
-                monstersById.Add(monsterId, monster);
-                numberOfMonstersAdded++;
-            }
-
-            if (numberOfMonstersAdded > 0)
-                await _context.SaveChangesAsync();
-
-            // refresh lookup with IDs now assigned
-            monstersById = _context.Monsters
+            var existingLoot = await _context.Loots
                 .AsNoTracking()
-                .ToDictionary(x => x.MonsterId);
+                .Select(l => new { l.ItemName, l.Rarity, l.MonsterId })
+                .ToListAsync();
 
-            // === Second pass: add Loot ===
-            for (int nRow = 2; nRow <= nEndRow; nRow++)
+            using var transaction = await _context.Database.BeginTransactionAsync();
+
+            try
             {
-                var monsterId = worksheet.Cells[nRow, 1].GetValue<int>();
-                var itemName = worksheet.Cells[nRow, 9].GetValue<string>();
-                var rarity = worksheet.Cells[nRow, 10].GetValue<string>();
-
-                if (!_context.Loots.Any(l => l.ItemName == itemName && l.Rarity == rarity && l.MonsterId == monsterId))
+                // PASS Monsters
+                for (int row = 2; row <= endRow; row++)
                 {
-                    Loot loot = new Loot
+                    var monsterId = worksheet.Cells[row, 1].GetValue<int>();
+                    var name = worksheet.Cells[row, 2].GetValue<string>();
+
+                    if (monsterId == 0 || string.IsNullOrWhiteSpace(name))
+                        continue;
+
+                    if (monstersById.ContainsKey(monsterId))
+                        continue;
+
+                    var monster = new Monster
+                    {
+                        MonsterId = monsterId, // external ID — intentional
+                        Name = name,
+                        Species = worksheet.Cells[row, 3].GetValue<string>(),
+                        Element = worksheet.Cells[row, 4].GetValue<string>(),
+                        Weakness = worksheet.Cells[row, 5].GetValue<string>(),
+                        Rank = worksheet.Cells[row, 6].GetValue<string>(),
+                        AggressionLevel = worksheet.Cells[row, 7].GetValue<string>()
+                    };
+
+                    _context.Monsters.Add(monster);
+                    monstersById.Add(monsterId, monster);
+                    monstersAdded++;
+                }
+
+                if (monstersAdded > 0)
+                    await _context.SaveChangesAsync();
+
+                // PASS Loot
+                for (int row = 2; row <= endRow; row++)
+                {
+                    var monsterId = worksheet.Cells[row, 1].GetValue<int>();
+                    var itemName = worksheet.Cells[row, 9].GetValue<string>();
+                    var rarity = worksheet.Cells[row, 10].GetValue<string>();
+
+                    if (string.IsNullOrWhiteSpace(itemName) || string.IsNullOrWhiteSpace(rarity))
+                        continue;
+
+                    if (!monstersById.ContainsKey(monsterId))
+                        continue;
+
+                    bool exists = existingLoot.Any(l =>
+                        l.ItemName == itemName &&
+                        l.Rarity == rarity &&
+                        l.MonsterId == monsterId);
+
+                    if (exists)
+                        continue;
+
+                    _context.Loots.Add(new Loot
                     {
                         ItemName = itemName,
                         Rarity = rarity,
                         MonsterId = monsterId
-                    };
-                    _context.Loots.Add(loot);
-                    numberOfLootAdded++;
+                    });
+
+                    lootAdded++;
                 }
+
+                if (lootAdded > 0)
+                    await _context.SaveChangesAsync();
+
+                await transaction.CommitAsync();
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                throw;
             }
 
-            if (numberOfLootAdded > 0)
-                await _context.SaveChangesAsync();
-
-            return new JsonResult(new
+            return Ok(new
             {
-                MonstersAdded = numberOfMonstersAdded,
-                LootAdded = numberOfLootAdded
+                MonstersAdded = monstersAdded,
+                LootAdded = lootAdded
             });
+        }
+        [HttpPost("Users")]
+        public async Task<ActionResult> PostUsers()
+        {
+            const string administrator = "administrator";
+            const string registeredUser = "registeredUser";
+
+            if(!await roleManager.RoleExistsAsync(administrator))
+            {
+                var x = await roleManager.CreateAsync(new IdentityRole(administrator));
+            }
+
+            if (!await roleManager.RoleExistsAsync(registeredUser))
+            {
+                var x = await roleManager.CreateAsync(new IdentityRole(registeredUser));
+            }
+
+            MonsterArchiveUser adminUser = new()
+            {
+                UserName = "admin",
+                Email = "bryan.castro.789@gmail.com",
+                EmailConfirmed = true,
+                SecurityStamp = Guid.NewGuid().ToString()
+            };
+            await userManager.CreateAsync(adminUser, configuration["DefaultPasswords:admin"]!);
+
+            MonsterArchiveUser regularUser = new()
+            {
+                UserName = "user",
+                Email = "bryan.castro.0072@gmail.com",
+                EmailConfirmed = true,
+                SecurityStamp = Guid.NewGuid().ToString()
+            };
+            await userManager.CreateAsync(regularUser, configuration["DefaultPasswords:user"]!);
+            
+            await userManager.AddToRoleAsync(adminUser, administrator);
+            await userManager.AddToRoleAsync(regularUser, registeredUser);
+            return Ok();
         }
     }
 }

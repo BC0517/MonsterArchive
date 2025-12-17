@@ -4,16 +4,18 @@ import { LootData } from './loot-data';
 import { RouterLink } from '@angular/router';
 import { environment } from '../../environments/environment.development';
 import { Observable } from 'rxjs';
-import { AsyncPipe } from '@angular/common';
+import { AsyncPipe, NgIf } from '@angular/common';
+import { MatTableModule } from '@angular/material/table';
 
 @Component({
   selector: 'app-loot',
-  imports: [RouterLink,AsyncPipe],
+  imports: [RouterLink, AsyncPipe],
   templateUrl: './loot.html',
-  styleUrl: './loot.scss'
+  styleUrls: ['./loot.scss']
 })
 
 export class Loot{
+  displayedColumns: string[] = ['lootId', 'itemName', 'rarity', 'monsterId'];
   loot: any;
   loots$: Observable<LootData[]>;
   constructor(http: HttpClient) {

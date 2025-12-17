@@ -1,15 +1,10 @@
 import { Component } from '@angular/core';
 import { RouterLink } from "@angular/router";
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
+import { AngularMaterialModule } from '../angular-material';
 
 @Component({
   selector: 'app-nav-bar',
-  imports: [RouterLink, 
-    MatToolbarModule,
-    MatIconModule,
-    MatButtonModule],
+  imports: [RouterLink, AngularMaterialModule],
   templateUrl: './nav-bar.html',
   styleUrl: './nav-bar.scss'
 })

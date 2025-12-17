@@ -10,7 +10,6 @@
         @for (loot of (loots$ | async); track $index) {
         <tr>
             <td><a [routerLink]="['/loot', loot.lootId]">{{loot.lootId}}</a></td>
-            <td>{{loot.lootId}}</td>
             <td>{{loot.itemName}}</td>
             <td>{{loot.rarity}}</td>
             <td>{{loot.monsterId}}</td>
@@ -18,3 +17,9 @@
     }
     </tbody>
 </table>
+
+<!--To do:
+See Chapter 6
+Add MatTable module and use mat-table for better styling
+Add Pagination when there are lots of loot itmes
+-->

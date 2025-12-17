@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MonsterArchive.Server.Data;
 using MonsterArchive.Server.Data.Models;
+using MonsterArchive.Server.DTO;
 
 namespace MonsterArchive.Server.Controllers
 {
@@ -23,6 +25,7 @@ namespace MonsterArchive.Server.Controllers
 
         // GET: api/Monsters
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<Monster>>> GetMonsters()
         {
             return await _context.Monsters.ToListAsync();
@@ -76,8 +79,19 @@ namespace MonsterArchive.Server.Controllers
         // POST: api/Monsters
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Monster>> PostMonster(Monster monster)
+        public async Task<ActionResult<Monster>> PostMonster(MonsterDTO dto)
         {
+            var monster = new Monster
+            {
+                MonsterId = dto.MonsterId,
+                Name = dto.Name,
+                Species = dto.Species,
+                Element = dto.Element,
+                Weakness = dto.Weakness,
+                Rank = dto.Rank,
+                AggressionLevel = dto.AggressionLevel
+            };
+
             _context.Monsters.Add(monster);
             try
             {
