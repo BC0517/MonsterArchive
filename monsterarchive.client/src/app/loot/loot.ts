@@ -15,7 +15,6 @@ import { MatTableModule } from '@angular/material/table';
 })
 
 export class Loot{
-  displayedColumns: string[] = ['lootId', 'itemName', 'rarity', 'monsterId'];
   loot: any;
   loots$: Observable<LootData[]>;
   constructor(http: HttpClient) {

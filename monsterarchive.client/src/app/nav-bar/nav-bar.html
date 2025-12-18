@@ -4,10 +4,10 @@
             <mat-icon>home</mat-icon>
         </button> |
         <a mat-flat-button color="primary" [routerLink]="['/loot']">Loot</a> |
-        <a mat-flat-button color="primary" [routerLink]="['/monster']">Monster</a> |
+        <a mat-flat-button color="primary" [routerLink]="['/monster']">Monster</a> 
 
-        <Span class = "spacer"></Span>
-        @if (authService.isLoggedIn()){
+        <Span class = "separator"></Span>
+        @if (isLoggedIn){
             <a mat-flat-button color="primary" (click) = "authService.logout()">Logout</a>
         }
         @else{
