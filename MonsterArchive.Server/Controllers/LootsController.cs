@@ -25,13 +25,13 @@ namespace MonsterArchive.Server.Controllers
 
         // GET: api/Loots
         [HttpGet]
-        [Authorize]
         public async Task<ActionResult<IEnumerable<Loot>>> GetLoots()
         {
             return await _context.Loots.ToListAsync();
         }
 
         // GET: api/Loots/5
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<ActionResult<Loot>> GetLoot(int id)
         {
@@ -47,6 +47,7 @@ namespace MonsterArchive.Server.Controllers
 
         // PUT: api/Loots/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Authorize]
         [HttpPut("{id}")]
         public async Task<IActionResult> PutLoot(int id, Loot loot)
         {
@@ -78,6 +79,7 @@ namespace MonsterArchive.Server.Controllers
 
         // POST: api/Loots
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Authorize]
         [HttpPost]
         public async Task<ActionResult<Loot>> PostLoot(LootDTO dto)
         {
@@ -94,6 +96,7 @@ namespace MonsterArchive.Server.Controllers
         }
 
         // DELETE: api/Loots/5
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteLoot(int id)
         {
