@@ -1,0 +1,23 @@
+<h1>Loot Info</h1>
+
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Item Name</th>
+      <th>Rarity</th>
+      <th>MonsterId</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    @for (loot of (lootList$ | async); track $index) {
+      <tr>
+        <td>{{ loot.itemName }}</td>
+        <td>{{ loot.rarity }}</td>
+        <td>{{ loot.monsterId }}</td>
+      </tr>
+    }
+  </tbody>
+</table>
+
+<button [routerLink]="['/monster']">Return to Monsters</button>

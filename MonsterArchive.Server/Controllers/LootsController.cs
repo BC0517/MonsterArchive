@@ -24,6 +24,7 @@ namespace MonsterArchive.Server.Controllers
         }
 
         // GET: api/Loots
+        [Authorize]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Loot>>> GetLoots()
         {
@@ -31,7 +32,6 @@ namespace MonsterArchive.Server.Controllers
         }
 
         // GET: api/Loots/5
-        [Authorize]
         [HttpGet("{id}")]
         public async Task<ActionResult<Loot>> GetLoot(int id)
         {
@@ -47,7 +47,6 @@ namespace MonsterArchive.Server.Controllers
 
         // PUT: api/Loots/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [Authorize]
         [HttpPut("{id}")]
         public async Task<IActionResult> PutLoot(int id, Loot loot)
         {
@@ -79,7 +78,6 @@ namespace MonsterArchive.Server.Controllers
 
         // POST: api/Loots
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [Authorize]
         [HttpPost]
         public async Task<ActionResult<Loot>> PostLoot(LootDTO dto)
         {

@@ -1,3 +1,5 @@
+import { LootList } from "../loot-details/loot-list";
+
 export interface MonsterData {
   monsterId: number;
   name: string;
@@ -6,5 +8,5 @@ export interface MonsterData {
   weakness: string;
   rank: string;
   aggressionLevel: string;
-  loots: string[];
+  loots: LootList[];
 }

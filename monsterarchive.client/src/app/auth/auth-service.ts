@@ -3,7 +3,7 @@ import { LoginRequest } from './login-request';
 import { LoginResponse } from './login-response';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import { environment } from '../../environments/environment.development';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -44,6 +44,6 @@ export class AuthService {
     this.setAuthStatus(false);
   }
   isLoggedIn(): boolean {
-    return this.getToken !== null;
+    return this.getToken() !== null;
   }
 }

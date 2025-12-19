@@ -12,7 +12,7 @@
     <tbody>
         @for (monster of (monsters$ | async); track $index) {
         <tr>
-            <td><a [routerLink]="['/monster', monster.monsterId]">{{monster.monsterId}}</a></td>
+            <td><a [routerLink]="['/lootDetails', monster.monsterId]">{{monster.monsterId}}</a></td>
             <td>{{monster.name}}</td>
             <td>{{monster.species}}</td>
             <td>{{monster.element}}</td>

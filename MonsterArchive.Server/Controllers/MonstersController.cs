@@ -24,6 +24,7 @@ namespace MonsterArchive.Server.Controllers
         }
 
         // GET: api/Monsters
+        [Authorize]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Monster>>> GetMonsters()
         {
@@ -31,23 +32,38 @@ namespace MonsterArchive.Server.Controllers
         }
 
         // GET: api/Monsters/5
-        [Authorize]
         [HttpGet("{id}")]
-        public async Task<ActionResult<Monster>> GetMonster(int id)
+        public async Task<ActionResult<MonsterDetailsDTO>> GetMonster(int id)
         {
-            var monster = await _context.Monsters.FindAsync(id);
+            var monster = await _context.Monsters
+                .Where(m => m.MonsterId == id)
+                .Select(m => new MonsterDetailsDTO
+                {
+                    MonsterId = m.MonsterId,
+                    Name = m.Name,
+                    Species = m.Species,
+                    Element = m.Element,
+                    Weakness = m.Weakness,
+                    Rank = m.Rank,
+                    AggressionLevel = m.AggressionLevel,
+                    Loots = m.Loots.Select(l => new LootDTO
+                    {
+                        ItemName = l.ItemName,
+                        Rarity = l.Rarity,
+                        MonsterId = l.MonsterId
+                    }).ToList()
+                })
+                .FirstOrDefaultAsync();
 
             if (monster == null)
-            {
                 return NotFound();
-            }
 
-            return monster;
+            return Ok(monster);
         }
+
 
         // PUT: api/Monsters/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [Authorize]
         [HttpPut("{id}")]
         public async Task<IActionResult> PutMonster(int id, Monster monster)
         {
@@ -79,7 +95,6 @@ namespace MonsterArchive.Server.Controllers
 
         // POST: api/Monsters
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [Authorize]
         [HttpPost]
         public async Task<ActionResult<Monster>> PostMonster(MonsterDTO dto)
         {
@@ -115,7 +130,6 @@ namespace MonsterArchive.Server.Controllers
         }
 
         // DELETE: api/Monsters/5
-        [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteMonster(int id)
         {
