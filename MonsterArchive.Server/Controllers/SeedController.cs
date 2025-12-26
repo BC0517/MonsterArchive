@@ -1,11 +1,14 @@
-﻿using System.Security;
+﻿using Azure.Identity;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using OfficeOpenXml;
 using MonsterArchive.Server.Data;
 using MonsterArchive.Server.Data.Models;
-using Microsoft.AspNetCore.Identity;
-using Azure.Identity;
+using MonsterArchive.Server.DTO;
+using OfficeOpenXml;
+using System.Security;
+using RegisterRequest = MonsterArchive.Server.DTO.RegisterRequest;
 
 namespace MonsterArchive.Server.Controllers
 {
@@ -141,10 +144,12 @@ namespace MonsterArchive.Server.Controllers
         [HttpPost("Users")]
         public async Task<ActionResult> PostUsers()
         {
+            // Create User roles
             const string administrator = "administrator";
             const string registeredUser = "registeredUser";
 
-            if(!await roleManager.RoleExistsAsync(administrator))
+            // If the roles don't exist, create them
+            if (!await roleManager.RoleExistsAsync(administrator))
             {
                 var x = await roleManager.CreateAsync(new IdentityRole(administrator));
             }
@@ -175,6 +180,36 @@ namespace MonsterArchive.Server.Controllers
             await userManager.AddToRoleAsync(adminUser, administrator);
             await userManager.AddToRoleAsync(regularUser, registeredUser);
             return Ok();
+        }
+        [HttpPost("RegisterUser")]
+        public async Task<ActionResult> RegisterUser(RegisterRequest registerRequest)
+        {
+            const string registeredUser = "registeredUser";                                             // Use default role for new users
+            if (await userManager.FindByEmailAsync(registerRequest.Email) != null)                      // Check if user already exists
+            {
+                return BadRequest("User with this email already exists.");
+            }
+
+            var newUser = new MonsterArchiveUser                                                        // Create a new MonsterArchiveUser using the provided username, password, and email
+            {
+                UserName = registerRequest.Username,
+                Email = registerRequest.Email,
+                EmailConfirmed = true,
+                SecurityStamp = Guid.NewGuid().ToString()
+            };
+            
+            await userManager.CreateAsync(newUser, registerRequest.Password);                           // Use provided username and password to create the user
+
+            await userManager.AddToRoleAsync(newUser, registeredUser);                                  // Add the user to a default role (e.g., "registeredUser")
+
+            // Optional: Send a confirmation email to the user
+
+
+            return Ok(new RegisterResponse
+            {
+                Success = true,
+                Message = "User registered successfully."
+            });
         }
     }
 }

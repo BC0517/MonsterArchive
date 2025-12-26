@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component} from '@angular/core';
 import { LootData } from './loot-data';
 import { RouterLink } from '@angular/router';
-import { environment } from '../../environments/environment';
+import { environment } from '../../environments/environment.development';
 import { Observable } from 'rxjs';
 import { AsyncPipe, NgIf } from '@angular/common';
 import { MatTableModule } from '@angular/material/table';

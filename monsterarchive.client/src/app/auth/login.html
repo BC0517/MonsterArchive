@@ -1,14 +1,22 @@
-<div>
+<div class = "login-container">
     <h1>Login</h1>
     <form [formGroup]="form" (ngSubmit)="onSubmit()">
         <div>
         <label>Name:</label>
         <input type="text" name="username" formControlName = "username"/>
+        </div>
         
+        <div>
         <label>Password:</label>
         <input type="password" name = "password" formControlName = "password"/>
-
+        </div>
+        
+        <div>
         <button type="submit">Login</button>
         </div>
     </form>
+</div>
+<div class="register-link">
+    <h3>New User?</h3>
+    <button [routerLink]="['/register']">Register Here!</button>
 </div>

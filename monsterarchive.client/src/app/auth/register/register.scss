@@ -1,33 +1,27 @@
-.login-container {
+.register-container {
   max-width: 400px;
   margin: 0 auto;   /* centers the container */
   padding: 20px;
 }
 
 // Align the labels and inputs
-.login-container form div {
+.register-container form div {
   display: flex;
   align-items: center;
   margin-bottom: 15px;
 }
 
-.login-container label {
+.register-container label {
   width: 100px;
   font-weight: bold;
 }
 
 // Limit input width
-.login-container input {
+.register-container input {
   max-width: 200px;
   width: 100%;
 }
 
-.login-container form div:last-child {
+.register-container form div:last-child {
   justify-content: center;
-}
-
-// Given some spacing for the register link section
-.register-link {
-    margin-top: 20px;
-    text-align: center;
 }

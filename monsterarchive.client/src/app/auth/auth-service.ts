@@ -3,7 +3,9 @@ import { LoginRequest } from './login-request';
 import { LoginResponse } from './login-response';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import { environment } from '../../environments/environment';
+import { environment } from '../../environments/environment.development';
+import { RegisterResponse } from './register/register-response';
+import { RegisterRequest } from './register/register-request';
 
 @Injectable({
   providedIn: 'root'
@@ -33,6 +35,10 @@ export class AuthService {
           this.setAuthStatus(true);
         }
       }))
+  }
+
+  register(registerRequest: RegisterRequest): Observable<RegisterResponse> {
+    return this.http.post<RegisterResponse>(environment.apiUrl + "api/Seed/RegisterUser", registerRequest);
   }
 
   getToken(): string | null {

@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { environment } from '../../environments/environment';
+import { environment } from '../../environments/environment.development';
 import { CommonModule } from '@angular/common';
 import { MonsterData } from '../monster/monster-data';
 import { map, switchMap } from 'rxjs/operators';
